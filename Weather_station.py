@@ -5,6 +5,7 @@ from time import sleep
 import datetime
 import numpy as np
 import pandas as pd
+import sys
 
 port = 1
 address =0x76
@@ -26,5 +27,6 @@ while True:
     #print(dict_origin)
     df = pd.DataFrame.from_dict(dict_origin)
     print(df)
+    print(sys.getsizeof(df))
     #print(humidity, pressure, ambient_temperature)
-    sleep(1)
+    sleep(3)
