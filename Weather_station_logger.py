@@ -1,6 +1,7 @@
 import smbus2
 import bme280
 import pymysql
+import sys
 
 #import sqlite3
 from datetime import datetime
@@ -10,11 +11,11 @@ import time
 class Logger():
     def __init__(self):
         self.data_dict = {}
-        port = 1
-        address =0x76
-        bus = smbus2.SMBus(port)
-        bme280.load_calibration_params(bus,address)
-        self.bme280_data = bme280.sample(bus,address)
+        self.port = 1
+        self.address =0x76
+        self.bus = smbus2.SMBus(self.port)
+        bme280.load_calibration_params(self.bus,self.address)
+        self.bme280_data = bme280.sample(self.bus,self.address)
         
     def collect_data(self):
         ''' collect data and assign to class variable'''
@@ -36,13 +37,13 @@ class Logger():
         print(self.data_dict['data'][1])
         print(self.data_dict['data'][2])
         print(self.data_dict['data'][3])
-        conn = pymysql.connect(host='localhost', user='user1', password= 'minsung', database= 'datalogger2')
-        cursor = conn.cursor()
-        cursor.execute("""INSERT INTO data VALUES (%s,%s,%s,%s)""", self.data_dict['data'])
+        self.conn = pymysql.connect(host='localhost', user='user1', password= 'minsung', database= 'datalogger2')
+        self.cursor = self.conn.cursor()
+        self.cursor.execute("""INSERT INTO data VALUES (%s,%s,%s,%s)""", self.data_dict['data'])
         #cursor.execute("INSERT INTO data VALUES ('0000-00-00 00:00:00' ,1.0,1.0,1.0)".format()
-        conn.commit()
-        conn.close()
-        
+        self.conn.commit()
+        self.conn.close()
+        self.bus.close()
         
         #for table, data in self.data_dict.items():
         #    cnt = len(data)-1
@@ -52,13 +53,18 @@ class Logger():
         #conn.close()
     
 def main():
+    i = 0
     while True:
+        
         logger = Logger()
         logger.collect_data()
         logger.log_data()
         logger.print_data()
-        sleep(0.1)
-    
-
+        sleep(0.01)
+        print(i)
+        i+=1
+            
+        #sys.modules[__name__].__dict__.clear()
 main()
+
 

@@ -41,7 +41,7 @@ def main():
         logger.collect_data()
         logger.log_data()
         logger.print_data()
-        sleep(3)
+        sleep(0.1)
     
 
 main()
